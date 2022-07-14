@@ -1,17 +1,21 @@
-module.exports = {
-    dialect: 'postgres',
-    host: process.env.DATABASE_URL.slice(91 , 131),
-    username: process.env.DATABASE_URL.slice(11 , 25),
-    password: process.env.DATABASE_URL.slice(26 , 90),
-    database: process.env.DATABASE_URL.slice(137),
-    define: {
-        timestamps: true,
-        underscored: true,
-    },
+const sequelize = require('sequelize');
+
+sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialectOptions: {
         ssl: {
-          require: true,
-          rejectUnauthorized: false
+            require: true,
+            rejectUnauthorized: false
         }
     }
-};
+}
+);
+
+sequelize.authenticate()
+    .then(() => {
+        console.log('Connection has been established successfully.');
+    })
+    .catch(err => {
+        console.error('Unable to connect to the database:', err);
+    });
+
+module.exports = sequelize
